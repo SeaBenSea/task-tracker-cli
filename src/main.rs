@@ -22,7 +22,6 @@ fn main() {
             }
 
             let task_name = &args[2];
-            println!("{}", task_name);
             TaskManager::add_task(task_name.to_string());
         }
         "update" => {
@@ -80,6 +79,7 @@ fn main() {
             println!("  delete <id> - Delete a task");
             println!("  mark-in-progress <id> - Mark a task as in progress");
             println!("  mark-done <id> - Mark a task as done");
+            println!("  restart-task <id> - Restart a task");
             println!("  list [all | done | in-progress | not-done] - List tasks");
         }
         _ => {
