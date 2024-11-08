@@ -30,7 +30,13 @@ fn main() {
                 return;
             }
 
-            let task_id = args[2].parse::<u32>().unwrap();
+            let task_id = match args[2].parse::<u32>() {
+                Ok(id) => id,
+                Err(_) => {
+                    eprintln!("Invalid task ID provided.");
+                    return;
+                }
+            };
             let task_description = args[3].clone();
             TaskManager::update_task(task_id, task_description);
         }
@@ -40,7 +46,13 @@ fn main() {
                 return;
             }
 
-            let task_id = args[2].parse::<u32>().unwrap();
+            let task_id = match args[2].parse::<u32>() {
+                Ok(id) => id,
+                Err(_) => {
+                    eprintln!("Invalid task ID provided.");
+                    return;
+                }
+            };
             TaskManager::delete_task(task_id);
         }
         "mark-in-progress" => {
@@ -49,7 +61,13 @@ fn main() {
                 return;
             }
 
-            let task_id = args[2].parse::<u32>().unwrap();
+            let task_id = match args[2].parse::<u32>() {
+                Ok(id) => id,
+                Err(_) => {
+                    eprintln!("Invalid task ID provided.");
+                    return;
+                }
+            };
             TaskManager::mark_in_progress_task(task_id);
         }
         "mark-done" => {
@@ -58,7 +76,13 @@ fn main() {
                 return;
             }
 
-            let task_id = args[2].parse::<u32>().unwrap();
+            let task_id = match args[2].parse::<u32>() {
+                Ok(id) => id,
+                Err(_) => {
+                    eprintln!("Invalid task ID provided.");
+                    return;
+                }
+            };
             TaskManager::mark_done(task_id);
         }
         "restart-task" => {
@@ -67,7 +91,13 @@ fn main() {
                 return;
             }
 
-            let task_id = args[2].parse::<u32>().unwrap();
+            let task_id = match args[2].parse::<u32>() {
+                Ok(id) => id,
+                Err(_) => {
+                    eprintln!("Invalid task ID provided.");
+                    return;
+                }
+            };
             TaskManager::restart_task(task_id);
         }
         "list" => TaskManager::list_tasks(args.get(2).cloned()),
