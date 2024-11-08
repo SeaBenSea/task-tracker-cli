@@ -26,11 +26,11 @@ impl TaskManager {
             .expect("Failed to read data.");
 
         if data.is_empty() {
-            return HashMap::new();
+            HashMap::new()
         } else {
             let tasks: Vec<Task> = serde_json::from_str(&data).expect("Failed to parse JSON.");
-            let tasks_map = tasks.into_iter().map(|task| (task.id, task)).collect();
-            return tasks_map;
+
+            tasks.into_iter().map(|task| (task.id, task)).collect()
         }
     }
 
