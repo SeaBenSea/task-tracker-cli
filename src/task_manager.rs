@@ -57,7 +57,7 @@ impl TaskManager {
         };
 
         tasks.push(task);
-        print!("Task added successfully with ID: {}", id);
+        println!("Task added successfully with ID: {}", id);
 
         Self::save_tasks(&tasks);
         Self::list_tasks(None);
@@ -71,6 +71,7 @@ impl TaskManager {
             Some(task) => {
                 task.description = description;
                 task.updated_at = Local::now();
+                println!("Task with ID {} updated successfully.", id);
 
                 Self::save_tasks(&tasks);
                 Self::list_tasks(None);
@@ -88,6 +89,8 @@ impl TaskManager {
         match task {
             Some(index) => {
                 tasks.remove(index);
+                println!("Task with ID {} deleted successfully.", id);
+
                 Self::save_tasks(&tasks);
                 Self::list_tasks(None);
             }
@@ -105,6 +108,10 @@ impl TaskManager {
             Some(task) => {
                 task.status = Status::InProgress;
                 task.updated_at = Local::now();
+                println!("Task with ID {} is now in progress.", id);
+
+                Self::save_tasks(&tasks);
+                Self::list_tasks(None);
             }
             None => {
                 eprintln!("Task with ID {} not found.", id);
@@ -120,6 +127,10 @@ impl TaskManager {
             Some(task) => {
                 task.status = Status::Done;
                 task.updated_at = Local::now();
+                println!("Task with ID {} is now done.", id);
+
+                Self::save_tasks(&tasks);
+                Self::list_tasks(None);
             }
             None => {
                 eprintln!("Task with ID {} not found.", id);
@@ -135,6 +146,10 @@ impl TaskManager {
             Some(task) => {
                 task.status = Status::Todo;
                 task.updated_at = Local::now();
+                println!("Task with ID {} is now restarted.", id);
+
+                Self::save_tasks(&tasks);
+                Self::list_tasks(None);
             }
             None => {
                 eprintln!("Task with ID {} not found.", id);
