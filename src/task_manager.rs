@@ -1,5 +1,6 @@
 use crate::models::{Status, Task};
 use chrono::Local;
+use colored::*;
 use serde_json::json;
 use std::{
     collections::HashMap,
@@ -13,7 +14,7 @@ const FILE_PATH: &str = "tasks.json";
 pub struct TaskManager;
 
 impl TaskManager {
-    fn load_tasks() -> HashMap<u32, Task> {
+    pub fn load_tasks() -> HashMap<u32, Task> {
         if !Path::new(FILE_PATH).exists() {
             File::create(FILE_PATH).expect("Failed to create JSON file.");
             return HashMap::new();
@@ -56,7 +57,10 @@ impl TaskManager {
         };
 
         tasks.insert(id, task);
-        println!("Task added successfully with ID: {}", id);
+        println!(
+            "{}",
+            format!("Task added successfully with ID: {}", id).green()
+        );
 
         Self::save_tasks(&tasks);
         Self::list_tasks(None);
@@ -68,13 +72,16 @@ impl TaskManager {
             Some(task) => {
                 task.description = description;
                 task.updated_at = Local::now();
-                println!("Task with ID {} updated successfully.", id);
+                println!(
+                    "{}",
+                    format!("Task with ID {} updated successfully.", id).green()
+                );
 
                 Self::save_tasks(&tasks);
                 Self::list_tasks(None);
             }
             None => {
-                eprintln!("Task with ID {} not found.", id);
+                eprintln!("{}", format!("Task with ID {} not found.", id).red());
             }
         }
     }
@@ -82,12 +89,15 @@ impl TaskManager {
     pub fn delete_task(id: u32) {
         let mut tasks = Self::load_tasks();
         if tasks.remove(&id).is_some() {
-            println!("Task with ID {} deleted successfully.", id);
+            println!(
+                "{}",
+                format!("Task with ID {} deleted successfully.", id).green()
+            );
 
             Self::save_tasks(&tasks);
             Self::list_tasks(None);
         } else {
-            eprintln!("Task with ID {} not found.", id);
+            eprintln!("{}", format!("Task with ID {} not found.", id).red());
         }
     }
 
@@ -96,18 +106,24 @@ impl TaskManager {
         match tasks.get_mut(&id) {
             Some(task) => {
                 if task.status == Status::InProgress {
-                    eprintln!("Task with ID {} is already in progress.", id);
+                    eprintln!(
+                        "{}",
+                        format!("Task with ID {} is already in progress.", id).yellow()
+                    )
                 } else {
                     task.status = Status::InProgress;
                     task.updated_at = Local::now();
-                    println!("Task with ID {} marked as in progress.", id);
+                    println!(
+                        "{}",
+                        format!("Task with ID {} marked as in progress.", id).green()
+                    );
 
                     Self::save_tasks(&tasks);
                 }
                 Self::list_tasks(None);
             }
             None => {
-                eprintln!("Task with ID {} not found.", id);
+                eprintln!("{}", format!("Task with ID {} not found.", id).red());
             }
         }
     }
@@ -117,11 +133,14 @@ impl TaskManager {
         match tasks.get_mut(&id) {
             Some(task) => {
                 if task.status == Status::Done {
-                    eprintln!("Task with ID {} is already done.", id);
+                    eprintln!(
+                        "{}",
+                        format!("Task with ID {} is already done.", id).yellow()
+                    );
                 } else {
                     task.status = Status::Done;
                     task.updated_at = Local::now();
-                    println!("Task with ID {} marked as done.", id);
+                    println!("{}", format!("Task with ID {} marked as done.", id).green());
 
                     Self::save_tasks(&tasks);
                 }
@@ -129,7 +148,7 @@ impl TaskManager {
                 Self::list_tasks(None);
             }
             None => {
-                eprintln!("Task with ID {} not found.", id);
+                eprintln!("{}", format!("Task with ID {} not found.", id).red());
             }
         }
     }
@@ -139,18 +158,24 @@ impl TaskManager {
         match tasks.get_mut(&id) {
             Some(task) => {
                 if task.status == Status::Todo {
-                    eprintln!("Task with ID {} is already in Todo status.", id);
+                    eprintln!(
+                        "{}",
+                        format!("Task with ID {} is already in Todo status.", id).yellow()
+                    );
                 } else {
                     task.status = Status::Todo;
                     task.updated_at = Local::now();
-                    println!("Task with ID {} restarted successfully.", id);
+                    println!(
+                        "{}",
+                        format!("Task with ID {} restarted successfully.", id).green()
+                    );
 
                     Self::save_tasks(&tasks);
                 }
                 Self::list_tasks(None);
             }
             None => {
-                eprintln!("Task with ID {} not found.", id);
+                eprintln!("{}", format!("Task with ID {} not found.", id).red());
             }
         }
     }
@@ -173,32 +198,39 @@ impl TaskManager {
                 .filter(|task| task.status != Status::Done)
                 .collect(),
             _ => {
-                eprintln!("Usage: task-tracker-cli list [all | done | in-progress | not-done], default is all.");
+                eprintln!("{}", "Usage: task-tracker-cli list [all | done | in-progress | not-done], default is all.".red());
                 return;
             }
         };
 
         if filtered_tasks.is_empty() {
-            println!("No tasks found.");
+            println!("{}", "No tasks found.".yellow());
             return;
         }
 
         filtered_tasks.sort_by_key(|task| task.id);
 
         println!(
-            "{: <5} | {: <20} | {: <10} | {: <20} | {: <20}",
-            "ID", "Description", "Status", "Created At", "Updated At"
+            "{: <5} | {: <40} | {: <15} | {: <20} | {: <20}",
+            "ID".bold(),
+            "Description".bold(),
+            "Status".bold(),
+            "Created At".bold(),
+            "Updated At".bold()
         );
-        println!(
-            "{:-<5} | {:-<20} | {:-<10} | {:-<20} | {:-<20}",
-            "", "", "", "", ""
-        );
+        println!("{}", "-".repeat(111).bright_black());
+
         for task in filtered_tasks {
+            let status_colored = match task.status {
+                Status::Todo => "Todo".yellow(),
+                Status::InProgress => "InProgress".blue(),
+                Status::Done => "Done".green(),
+            };
             println!(
-                "{: <5} | {: <20} | {: <10} | {: <20} | {: <20}",
+                "{: <5} | {: <40} | {: <15} | {: <20} | {: <20}",
                 task.id,
                 task.description,
-                format!("{:?}", task.status),
+                status_colored,
                 task.created_at.format("%d-%m-%Y %H:%M:%S"),
                 task.updated_at.format("%d-%m-%Y %H:%M:%S")
             );
