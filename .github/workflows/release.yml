@@ -106,7 +106,10 @@ jobs:
           path: ./artifacts
 
       - name: Zip Artifacts
-        run: zip -r task-tracker-cli-release.zip ./artifacts
+        run: |
+            cd artifacts
+            zip -r ../task-tracker-cli-release.zip .
+            cd ..
 
       - name: Create Git Tag
         run: |
