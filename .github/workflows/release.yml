@@ -12,9 +12,14 @@ on:
         required: true
         default: "false"
       release_type:
-        description: "Release type (major, minor, patch)"
+        description: "Release type"
+        type: choice
         required: true
         default: "patch"
+        options:
+          - major
+          - minor
+          - patch
 
 jobs:
   build:
