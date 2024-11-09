@@ -114,5 +114,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.determine_version.outputs.new_version }}
-          files: ./artifacts/*
+          files: ./artifacts/**/*
           make_latest: ${{ inputs.latest }}
