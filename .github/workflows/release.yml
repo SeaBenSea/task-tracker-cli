@@ -8,9 +8,13 @@ on:
         required: true
         default: "master"
       latest:
-        description: "Whether to create a release or not"
+        description: "Whether to set the release as the latest"
         required: true
         default: "false"
+      release_type:
+        description: "Release type (major, minor, patch)"
+        required: true
+        default: "patch"
 
 jobs:
   build:
@@ -57,13 +61,52 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get Latest Tag
+        id: get_latest_tag
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
+
+      - name: Determine Next Version
+        id: determine_version
+        run: |
+          latest_version=${{ steps.get_latest_tag.outputs.latest_tag }}
+          version_without_v=${latest_version#v}
+          IFS='.' read -ra parts <<< "$version_without_v"
+          major=${parts[0]}
+          minor=${parts[1]}
+          patch=${parts[2]}
+
+          if [ "${{ inputs.release_type }}" == "major" ]; then
+            major=$((major + 1))
+            minor=0
+            patch=0
+          elif [ "${{ inputs.release_type }}" == "minor" ]; then
+            minor=$((minor + 1))
+            patch=0
+          else
+            patch=$((patch + 1))
+          fi
+
+          new_version="v${major}.${minor}.${patch}"
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts
 
+      - name: Create Git Tag
+        run: |
+          git tag ${{ steps.determine_version.outputs.new_version }}
+          git push origin ${{ steps.determine_version.outputs.new_version }}
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.determine_version.outputs.new_version }}
           files: ./artifacts/*
           make_latest: ${{ inputs.latest }}
