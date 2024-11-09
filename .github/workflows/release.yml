@@ -10,7 +10,8 @@ on:
       latest:
         description: "Whether to set the release as the latest"
         required: true
-        default: "false"
+        type: boolean
+        default: false
       release_type:
         description: "Release type"
         type: choice
