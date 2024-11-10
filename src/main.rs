@@ -5,6 +5,8 @@ use colored::*;
 use std::env;
 use task_manager::TaskManager;
 
+const FILE_PATH: &str = "tasks.json";
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -15,6 +17,9 @@ fn main() {
 
     let command = &args[1];
 
+    // Instantiate TaskManager with the file path and verbose output
+    let task_manager = TaskManager::new(FILE_PATH.to_string(), true);
+
     match command.as_str() {
         "add" => {
             if args.len() != 3 {
@@ -23,85 +28,90 @@ fn main() {
             }
 
             let task_name = &args[2];
-            TaskManager::add_task(task_name.to_string());
+            task_manager.add_task(task_name.to_string());
         }
         "update" => {
             if args.len() != 4 {
-                eprintln!("Usage: task-tracker-cli update <id> <description>");
+                eprintln!(
+                    "{}",
+                    "Usage: task-tracker-cli update <id> <description>".red()
+                );
                 return;
             }
 
             let task_id = match args[2].parse::<u32>() {
                 Ok(id) => id,
                 Err(_) => {
-                    eprintln!("Invalid task ID provided.");
+                    eprintln!("{}", "Invalid task ID provided.".red());
                     return;
                 }
             };
             let task_description = args[3].clone();
-            TaskManager::update_task(task_id, task_description);
+            task_manager.update_task(task_id, task_description);
         }
         "delete" => {
             if args.len() != 3 {
-                eprintln!("Usage: task-tracker-cli delete <id>");
+                eprintln!("{}", "Usage: task-tracker-cli delete <id>".red());
                 return;
             }
 
             let task_id = match args[2].parse::<u32>() {
                 Ok(id) => id,
                 Err(_) => {
-                    eprintln!("Invalid task ID provided.");
+                    eprintln!("{}", "Invalid task ID provided.".red());
                     return;
                 }
             };
-            TaskManager::delete_task(task_id);
+            task_manager.delete_task(task_id);
         }
         "mark-in-progress" => {
             if args.len() != 3 {
-                eprintln!("Usage: task-tracker-cli mark-in-progress <id>");
+                eprintln!("{}", "Usage: task-tracker-cli mark-in-progress <id>".red());
                 return;
             }
 
             let task_id = match args[2].parse::<u32>() {
                 Ok(id) => id,
                 Err(_) => {
-                    eprintln!("Invalid task ID provided.");
+                    eprintln!("{}", "Invalid task ID provided.".red());
                     return;
                 }
             };
-            TaskManager::mark_in_progress_task(task_id);
+            task_manager.mark_in_progress_task(task_id);
         }
         "mark-done" => {
             if args.len() != 3 {
-                eprintln!("Usage: task-tracker-cli mark-done <id>");
+                eprintln!("{}", "Usage: task-tracker-cli mark-done <id>".red());
                 return;
             }
 
             let task_id = match args[2].parse::<u32>() {
                 Ok(id) => id,
                 Err(_) => {
-                    eprintln!("Invalid task ID provided.");
+                    eprintln!("{}", "Invalid task ID provided.".red());
                     return;
                 }
             };
-            TaskManager::mark_done(task_id);
+            task_manager.mark_done(task_id);
         }
         "restart-task" => {
             if args.len() != 3 {
-                eprintln!("Usage: task-tracker-cli restart-task <id>");
+                eprintln!("{}", "Usage: task-tracker-cli restart-task <id>".red());
                 return;
             }
 
             let task_id = match args[2].parse::<u32>() {
                 Ok(id) => id,
                 Err(_) => {
-                    eprintln!("Invalid task ID provided.");
+                    eprintln!("{}", "Invalid task ID provided.".red());
                     return;
                 }
             };
-            TaskManager::restart_task(task_id);
+            task_manager.restart_task(task_id);
         }
-        "list" => TaskManager::list_tasks(args.get(2).cloned()),
+        "list" => {
+            task_manager.list_tasks(args.get(2).cloned());
+        }
         "help" => {
             println!(
                 "{}",
@@ -121,7 +131,6 @@ fn main() {
                 "{}",
                 "  list [all | done | in-progress | not-done] - List tasks".green()
             );
-            println!("{}", "  tui - Launch the Text User Interface".green());
         }
         _ => {
             eprintln!(

@@ -1,7 +1,7 @@
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct Task {
     pub id: u32,
     pub description: String,
@@ -10,7 +10,7 @@ pub struct Task {
     pub updated_at: DateTime<Local>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub enum Status {
     Todo,
     InProgress,
