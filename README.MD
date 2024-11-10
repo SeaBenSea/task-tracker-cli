@@ -12,6 +12,9 @@ A simple and efficient command-line interface (CLI) tool for managing and tracki
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
   - [From Pre-built Binaries](#from-pre-built-binaries)
+    - [Windows](#windows)
+    - [Linux and macOS](#linux-and-macos)
+    - [Advanced: Adding to PATH](#advanced-adding-to-path)
   - [From Source](#from-source)
 - [Usage](#usage)
   - [Commands](#commands)
@@ -20,6 +23,8 @@ A simple and efficient command-line interface (CLI) tool for managing and tracki
 - [Built With](#built-with)
 - [Platform Support](#platform-support)
 - [Contributing](#contributing)
+  - [Code Formatting and Linting](#code-formatting-and-linting)
+- [Running Tests](#running-tests)
 - [License](#license)
 - [Credits](#credits)
 
@@ -54,7 +59,7 @@ Pre-built binaries are available for **Windows**, **Linux**, and **macOS** on th
 2. **Navigate to the download location** in Command Prompt or PowerShell:
 
    ```cmd
-   cd C:\Path\To\Download\task-tracker-cli-release\task-tracker-cli-windows
+   cd C:\Path\To\Extracted\Folder\task-tracker-cli-windows
    ```
 
 3. **Run the application** directly:
@@ -80,7 +85,7 @@ Pre-built binaries are available for **Windows**, **Linux**, and **macOS** on th
 2. **Navigate to the download location** in your terminal:
 
    ```bash
-   cd /path/to/download
+   cd /path/to/extracted/folder/task-tracker-cli-linux
    ```
 
 3. **Make the binary executable**:
@@ -223,6 +228,9 @@ task-tracker-cli add "Finish Rust project"
 
 ```bash
 Task added successfully with ID: 1
+ID    | Description                              | Status          | Created At           | Updated At
+---------------------------------------------------------------------------------------------------------------
+1     | Finish Rust project                      | Todo            | 01-01-2023 01:23:45  | 01-01-2023 01:23:45
 ```
 
 #### Listing All Tasks
@@ -236,7 +244,7 @@ task-tracker-cli list all
 ```bash
 ID    | Description                              | Status          | Created At           | Updated At
 ---------------------------------------------------------------------------------------------------------------
-1     | Finish Rust project                      | Todo            | 01-01-2024 01:23:45  | 01-01-2024 01:23:45
+1     | Finish Rust project                      | Todo            | 01-01-2023 01:23:45  | 01-01-2023 01:23:45
 ```
 
 #### Updating a Task
@@ -251,7 +259,7 @@ task-tracker-cli update 1 "Finish Rust project with README"
 Task with ID 1 updated successfully.
 ID    | Description                              | Status          | Created At           | Updated At
 ---------------------------------------------------------------------------------------------------------------
-1     | Finish Rust project with README          | Todo            | 01-01-2024 01:23:45  | 01-01-2024 01:24:45
+1     | Finish Rust project with README          | Todo            | 01-01-2023 01:23:45  | 01-01-2023 01:24:45
 ```
 
 #### Marking a Task as Done
@@ -266,7 +274,7 @@ task-tracker-cli mark-done 1
 Task with ID 1 marked as done.
 ID    | Description                              | Status          | Created At           | Updated At
 ---------------------------------------------------------------------------------------------------------------
-1     | Finish Rust project with README          | Done            | 01-01-2024 01:23:45  | 01-01-2024 01:25:45
+1     | Finish Rust project with README          | Done            | 01-01-2023 01:23:45  | 01-01-2023 01:25:45
 ```
 
 #### Deleting a Task
@@ -280,6 +288,26 @@ task-tracker-cli delete 1
 ```bash
 Task with ID 1 deleted successfully.
 No tasks found.
+```
+
+#### Viewing Help Information
+
+```bash
+task-tracker-cli help
+```
+
+**Output:**
+
+```bash
+Usage: task-tracker-cli <command> [arguments]
+Commands:
+  add <description> - Add a new task
+  update <id> <description> - Update a task
+  delete <id> - Delete a task
+  mark-in-progress <id> - Mark a task as in progress
+  mark-done <id> - Mark a task as done
+  restart-task <id> - Restart a task
+  list [all | done | in-progress | not-done] - List tasks
 ```
 
 ## Task Storage
@@ -315,7 +343,7 @@ Contributions are welcome! Please follow these steps:
 2. **Clone your fork** locally:
 
    ```bash
-   git clone https://github.com/SeaBenSea/task-tracker-cli.git
+   git clone https://github.com/seabensea/task-tracker-cli.git
    ```
 
 3. **Create a new branch** for your feature or bugfix:
@@ -345,6 +373,14 @@ Ensure your code is properly formatted and free of common issues:
 ```bash
 cargo fmt --all
 cargo clippy --all-targets --all-features -- -D warnings
+```
+
+## Running Tests
+
+To run the tests for this project, use the following command:
+
+```bash
+cargo test
 ```
 
 ## License
