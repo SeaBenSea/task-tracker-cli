@@ -1,7 +1,6 @@
 use crate::models::{Status, Task};
 use chrono::Local;
 use colored::*;
-use serde_json;
 use std::{
     collections::HashMap,
     fs::File,
@@ -108,10 +107,8 @@ impl TaskManager {
 
             self.save_tasks(&tasks);
             self.list_tasks(None);
-        } else {
-            if self.verbose {
-                eprintln!("{}", format!("Task with ID {} not found.", id).red());
-            }
+        } else if self.verbose {
+            eprintln!("{}", format!("Task with ID {} not found.", id).red());
         }
     }
 
