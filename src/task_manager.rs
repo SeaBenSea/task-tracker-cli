@@ -280,3 +280,115 @@ impl TaskManager {
         filtered_tasks
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::NamedTempFile;
+
+    fn create_task_manager() -> TaskManager {
+        let temp_file = NamedTempFile::new().expect("Failed to create temp file");
+        let file_path = temp_file.path().to_str().unwrap().to_string();
+        TaskManager::new(file_path, false)
+    }
+
+    #[test]
+    fn test_load_tasks_with_empty_file() {
+        let task_manager = create_task_manager();
+        let tasks = task_manager.load_tasks();
+
+        assert!(tasks.is_empty(), "Expected no tasks in empty file.");
+    }
+
+    #[test]
+    fn test_add_task() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Test task".to_string());
+        let tasks = task_manager.load_tasks();
+
+        assert_eq!(tasks.len(), 1);
+        assert_eq!(tasks[&1].description, "Test task");
+        assert_eq!(tasks[&1].status, Status::Todo);
+    }
+
+    #[test]
+    fn test_update_task() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Test task".to_string());
+
+        task_manager.update_task(1, "Updated task".to_string());
+        let tasks = task_manager.load_tasks();
+
+        assert_eq!(tasks[&1].description, "Updated task");
+    }
+
+    #[test]
+    fn test_delete_task() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Test task".to_string());
+
+        task_manager.delete_task(1);
+        let tasks = task_manager.load_tasks();
+
+        assert!(tasks.is_empty());
+    }
+
+    #[test]
+    fn test_delete_task_not_found() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Test task".to_string());
+
+        task_manager.delete_task(2);
+        let tasks = task_manager.load_tasks();
+
+        assert_eq!(tasks.len(), 1);
+    }
+
+    #[test]
+    fn test_mark_in_progress_task() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Test task".to_string());
+
+        task_manager.mark_in_progress_task(1);
+        let tasks = task_manager.load_tasks();
+
+        assert_eq!(tasks[&1].status, Status::InProgress);
+    }
+
+    #[test]
+    fn test_mark_done() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Test task".to_string());
+
+        task_manager.mark_done(1);
+        let tasks = task_manager.load_tasks();
+
+        assert_eq!(tasks[&1].status, Status::Done);
+    }
+
+    #[test]
+    fn test_restart_task() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Test task".to_string());
+        task_manager.mark_done(1);
+
+        task_manager.restart_task(1);
+        let tasks = task_manager.load_tasks();
+
+        assert_eq!(tasks[&1].status, Status::Todo);
+    }
+
+    #[test]
+    fn test_list_tasks() {
+        let task_manager = create_task_manager();
+        task_manager.add_task("Task 1".to_string());
+        task_manager.add_task("Task 2".to_string());
+        task_manager.mark_done(2);
+
+        let tasks = task_manager.list_tasks(Some("done".to_string()));
+
+        assert_eq!(tasks.len(), 1);
+        assert_eq!(tasks[0].description, "Task 2");
+        assert_eq!(tasks[0].status, Status::Done);
+    }
+}
